@@ -8,24 +8,73 @@ output:
 
 ## Loading and preprocessing the data
 
-```{r warning=FALSE}
-# Data File "activity.zip" resides in the same folder
-activityData <- read.csv(unz("activity.zip", "activity.csv"), stringsAsFactors=FALSE)
-# Convert "date" column to POSIXlt format for easier graph plotting
-activityData$date <- strptime(activityData$date, format = "%Y-%m-%d")
+Data File "activity.zip" resides in the same folder. Convert "date" column to POSIXlt format for easier graph plotting.
+
+```{r}
+activityData <- read.csv(unz("activity.zip", "activity.csv"), colClasses = c("integer", "Date", "integer"))
 ```
 
 
 ## What is mean total number of steps taken per day?
 
+```{r}
+stepsByDay <- aggregate(steps ~ date, activityData, sum)
+```
+
+```{r warning=FALSE}
+library(ggplot2)
+h <- ggplot(stepsByDay, aes(x = steps)) + geom_histogram(binwidth = 2500, aes(fill = ..count..))
+h + labs(x = "Daily Total Steps", y = "Number of Days", fill = "Number of Days")
+```
+
+```{r}
+with(stepsByDay, data.frame(Mean = mean(steps), Median = median(steps), row.names = "Daily Total Steps"))
+```
 
 
 ## What is the average daily activity pattern?
 
+```{r}
+meanStepsByInterval <- aggregate(steps ~ interval, activityData, mean)
+p <- qplot(interval, steps, data=meanStepsByInterval, geom = "line")
+p + labs(x = "Interval Number", y = "Average Number of Steps")
+```
 
+```{r}
+with(meanStepsByInterval, interval[which.max(steps)])
+```
 
 ## Imputing missing values
+
+```{r}
+sum(is.na(activityData$steps))
+```
+
+```{r}
+names(meanStepsByInterval)[2] <- "meanSteps"
+imputedData <- merge(activityData, meanStepsByInterval)
+imputedData$steps[is.na(imputedData$steps)] <- imputedData$meanSteps[is.na(imputedData$steps)]
+```
+
+```{r}
+stepsByDayImputed <- aggregate(steps ~ date, imputedData, sum)
+h2 <- ggplot(stepsByDayImputed, aes(x = steps)) + geom_histogram(binwidth = 2500, aes(fill = ..count..))
+h2 + labs(x = "Daily Total Steps", y = "Number of Days", fill = "Number of Days")
+```
+
+```{r}
+rbind(with(stepsByDay, data.frame(Mean = mean(steps), Median = median(steps), row.names = "Daily Total Steps (Original)")),
+with(stepsByDayImputed, data.frame(Mean = mean(steps), Median = median(steps), row.names = "Daily Total Steps (Imputed)")))
+```
 
 
 
 ## Are there differences in activity patterns between weekdays and weekends?
+
+```{r}
+imputedData$dayType <- factor(ifelse(weekdays(imputedData$date) %in% c("Saturday", "Sunday"), "Weekend", "Weekday"))
+meanByDayIntvl <- aggregate(steps ~ interval + dayType, imputedData, mean)
+p2 <- qplot(interval, steps, data=meanByDayIntvl, geom = "line", facets = dayType ~ .)
+p2 + labs(x = "Interval Number", y = "Average Number of Steps")
+```
+
