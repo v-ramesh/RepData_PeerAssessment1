@@ -63,16 +63,18 @@ h2 + labs(x = "Daily Total Steps", y = "Number of Days", fill = "Number of Days"
 ```
 
 ```{r}
-rbind(with(stepsByDay, data.frame(Mean = mean(steps), Median = median(steps), row.names = "Daily Total Steps (Original)")),
-with(stepsByDayImputed, data.frame(Mean = mean(steps), Median = median(steps), row.names = "Daily Total Steps (Imputed)")))
+rbind(with(stepsByDay, data.frame(Mean = mean(steps), Median = median(steps),
+                                  row.names = "Daily Total Steps (Original)")),
+      with(stepsByDayImputed, data.frame(Mean = mean(steps), Median = median(steps), 
+                                         row.names = "Daily Total Steps (Imputed)")))
 ```
-
 
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
 ```{r}
-imputedData$dayType <- factor(ifelse(weekdays(imputedData$date) %in% c("Saturday", "Sunday"), "Weekend", "Weekday"))
+imputedData$dayType <- factor(ifelse(weekdays(imputedData$date) %in% c("Saturday", "Sunday"), 
+                                     "Weekend", "Weekday"))
 meanByDayIntvl <- aggregate(steps ~ interval + dayType, imputedData, mean)
 p2 <- qplot(interval, steps, data=meanByDayIntvl, geom = "line", facets = dayType ~ .)
 p2 + labs(x = "Interval Number", y = "Average Number of Steps")
