@@ -44,7 +44,7 @@ with(stepsByDay, data.frame(Mean = mean(steps), Median = median(steps), row.name
 ```r
 meanStepsByInterval <- aggregate(steps ~ interval, activityData, mean)
 p <- qplot(interval, steps, data=meanStepsByInterval, geom = "line")
-p + labs(x = "Interval Number", y = "Average Number of Steps")
+p + labs(x = "Time of Day", y = "Average Number of Steps (5-min Interval)")
 ```
 
 ![](PA1_template_files/figure-html/unnamed-chunk-5-1.png) 
@@ -62,11 +62,32 @@ with(meanStepsByInterval, interval[which.max(steps)])
 
 
 ```r
-sum(is.na(activityData$steps))
+colSums(is.na(activityData))
 ```
 
 ```
-## [1] 2304
+##    steps     date interval 
+##     2304        0        0
+```
+
+
+```r
+datesMissingSteps <- with(activityData, unique(date[is.na(steps)]))
+datesMissingSteps
+```
+
+```
+## [1] "2012-10-01" "2012-10-08" "2012-11-01" "2012-11-04" "2012-11-09"
+## [6] "2012-11-10" "2012-11-14" "2012-11-30"
+```
+
+```r
+datesHavingSteps <- with(activityData, unique(date[!is.na(steps)]))
+datesMissingSteps %in% datesHavingSteps
+```
+
+```
+## [1] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
 ```
 
 
@@ -83,7 +104,7 @@ h2 <- ggplot(stepsByDayImputed, aes(x = steps)) + geom_histogram(binwidth = 2500
 h2 + labs(x = "Daily Total Steps", y = "Number of Days", fill = "Number of Days")
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-9-1.png) 
+![](PA1_template_files/figure-html/unnamed-chunk-10-1.png) 
 
 
 ```r
@@ -108,8 +129,8 @@ imputedData$dayType <- factor(ifelse(weekdays(imputedData$date) %in% c("Saturday
                                      "Weekend", "Weekday"))
 meanByDayIntvl <- aggregate(steps ~ interval + dayType, imputedData, mean)
 p2 <- qplot(interval, steps, data=meanByDayIntvl, geom = "line", facets = dayType ~ .)
-p2 + labs(x = "Interval Number", y = "Average Number of Steps")
+p2 + labs(x = "Time of Day", y = "Average Number of Steps (5-min Interval)")
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-11-1.png) 
+![](PA1_template_files/figure-html/unnamed-chunk-12-1.png) 
 
