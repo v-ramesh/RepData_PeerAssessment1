@@ -60,7 +60,7 @@ with(meanStepsByInterval, interval[which.max(steps)])
 ```
 ## [1] 835
 ```
-Looking at the values in the **interval** column, the intervals seem to be labelled by concatenating the hour:minute representation of time of day into a single number. For example, the interval number 1530 corresponds to the time 15:30 or in other words 3:30 PM. From the above calculation, we therefore see that, on average, the maximum number of steps is taken during the 5-minute interval at **8:35 AM**. 
+The values in the **interval** column seem to have been obtained by concatenating the hour:minute representation of time of day into a single number. For example, the interval number 1530 corresponds to the time 15:30 or in other words 3:30 PM. From the above calculation, we therefore see that, on average, the maximum number of steps is taken during the 5-minute interval at **8:35 AM**. 
 
 ## Imputing missing values
 
@@ -104,7 +104,7 @@ The above calculations show that there are 8 dates with missing step values, and
 1. The mean/median total number of steps per day divided by the number of intervals in a day
 2. The mean number of steps for the interval `i` (averaged across all days)
 
-Option 1. ensures that the total number of steps for the days with missing values is the same as the mean/median value in the dataset. It also has the advantage of being easier to code in R since all the missing values need to be replaced with the same constant value. However, it would be insensitive to the variation of activities across intervals, which, from the time series plot of the previous section, we can observe to be significant. We therefore use Option 2. as our imputation strategy which would take into account the particular interval for which the missing value is being filled. 
+Option 1. ensures that the total number of steps for the days with missing values is the same as the mean/median value in the dataset. It also has the advantage of being easier to code in R since all the missing values need to be replaced with the same constant value. However, it would be insensitive to the variation of activities across intervals which, from the time series plot of the previous section, can be observed to be significant. We therefore use Option 2. as our imputation strategy which would take into account the particular interval for which the missing value is being filled. 
 
 ### Creation of a dataset with missing data filled in
 The average number of steps for each interval were previously calculated and stored in the dataframe `meanStepsByInterval` - we make use of this dataframe in implementing our imputation strategy. 
@@ -160,4 +160,4 @@ p2 + labs(x = "Time of Day", y = "Average Number of Steps (5-min Interval)")
 
 ![](PA1_template_files/figure-html/unnamed-chunk-12-1.png) 
 
-The main difference seems to be that on weekdays there is a much sharper peak in activity level in the morning while on weekends the peak in activity level is more evenly spread through the morning to afternoon. This might be traceable to the fact that more of the day is available for physical activities during the weekends while on weekdays they are confined to the period immediately before the beginning of the workday or at the end.
+The main difference seems to be that on weekdays there is a much sharper peak in activity level in the morning while on weekends the peak in activity level is more evenly spread through the morning to afternoon. This might be traceable to the fact that more of the day is available for physical activities during the weekends while on weekdays they are confined to the period immediately before the beginning or at the end of the workday.
